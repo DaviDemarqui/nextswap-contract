@@ -9,12 +9,22 @@ interface INextV1Pool {
 
     error PoolNotInitialized();
 
+    // @notice: Emitted when a new pool is initialized
     event initialize(
-        bytes32 id,
-        Currency currency0,
-        Currency currency1,
+        bytes32 indexed id,
+        Currency indexed currency0,
+        Currency indexed currency1,
         address creator,
         int24 fee
+    );
+
+    // @notice: Emitted for swaps between currency0 and currency1
+    event Swap(
+        bytes32 indexed id,
+        address indexed sender,
+        int128 amount0,
+        int128 amount1,
+        uint24 fee
     );
 
     struct swapParams {
@@ -22,12 +32,14 @@ interface INextV1Pool {
         int256 amoutSpecified; // The amout being Bought or Sold;
     }
 
-    // @notice - return the reserves of that currency in the pool
+    // @notice: return the reserves of that currency in the pool
     function reservesOf(address currency) external view returns (int256);
 
-    function provideLiquidity(address currency0, address currency1) external payable;
+    // @notice: provide to the reserve of the liquidity pool
+    function provide(address currency0, address currency1, address provider) external payable;
 
-    function removeLiquidity(address currency) external;
+    // @notice: withdraw of the reserve of the liquidity pool
+    function withdraw(address currency) external;
 
     // @notice: swapping one token to another in the pool
     function take(Currency memory currency, address to, uint256 amount) external;
