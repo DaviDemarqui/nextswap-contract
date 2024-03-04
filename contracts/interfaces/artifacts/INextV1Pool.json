@@ -1,0 +1,364 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"burn(address,uint256,uint256)": "f5298aca",
+			"mint(address,uint256,uint256)": "156e29f6",
+			"provide(address,address,address)": "f8cc1564",
+			"reservesOf(address)": "93c85a21",
+			"settle((address,int256))": "bf1c6486",
+			"swap(bytes32,(bool,int256))": "ed55b079",
+			"take((address,int256),address,uint256)": "c243efaf",
+			"withdraw(address)": "51cff8d9"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "PoolNotInitialized",
+			"type": "error"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "id",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "sender",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "int128",
+					"name": "amount0",
+					"type": "int128"
+				},
+				{
+					"indexed": false,
+					"internalType": "int128",
+					"name": "amount1",
+					"type": "int128"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "fee",
+					"type": "uint24"
+				}
+			],
+			"name": "Swap",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "id",
+					"type": "bytes32"
+				},
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "currency",
+							"type": "address"
+						},
+						{
+							"internalType": "int256",
+							"name": "reserve",
+							"type": "int256"
+						}
+					],
+					"indexed": true,
+					"internalType": "struct Currency",
+					"name": "currency0",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "currency",
+							"type": "address"
+						},
+						{
+							"internalType": "int256",
+							"name": "reserve",
+							"type": "int256"
+						}
+					],
+					"indexed": true,
+					"internalType": "struct Currency",
+					"name": "currency1",
+					"type": "tuple"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "creator",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "int24",
+					"name": "fee",
+					"type": "int24"
+				}
+			],
+			"name": "initialize",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				}
+			],
+			"name": "burn",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				}
+			],
+			"name": "mint",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "currency0",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "currency1",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "provider",
+					"type": "address"
+				}
+			],
+			"name": "provide",
+			"outputs": [],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "currency",
+					"type": "address"
+				}
+			],
+			"name": "reservesOf",
+			"outputs": [
+				{
+					"internalType": "int256",
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "currency",
+							"type": "address"
+						},
+						{
+							"internalType": "int256",
+							"name": "reserve",
+							"type": "int256"
+						}
+					],
+					"internalType": "struct Currency",
+					"name": "token",
+					"type": "tuple"
+				}
+			],
+			"name": "settle",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "paid",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "poolId",
+					"type": "bytes32"
+				},
+				{
+					"components": [
+						{
+							"internalType": "bool",
+							"name": "zeroForOne",
+							"type": "bool"
+						},
+						{
+							"internalType": "int256",
+							"name": "amoutSpecified",
+							"type": "int256"
+						}
+					],
+					"internalType": "struct INextV1Pool.swapParams",
+					"name": "params",
+					"type": "tuple"
+				}
+			],
+			"name": "swap",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "currency",
+							"type": "address"
+						},
+						{
+							"internalType": "int256",
+							"name": "reserve",
+							"type": "int256"
+						}
+					],
+					"internalType": "struct Currency",
+					"name": "currency",
+					"type": "tuple"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				}
+			],
+			"name": "take",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "currency",
+					"type": "address"
+				}
+			],
+			"name": "withdraw",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}
