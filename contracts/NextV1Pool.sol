@@ -1,24 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-contract NextV1Pool {
+import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
+import {Currency} from "contracts/types/Currency.sol";
 
-    event newLiquidityProvider(address);
-    event newPool(address token1, address token2);
+abstract contract NextV1Pool is INextV1Pool {
 
-    mapping(address => uint256) public liquidityProviders;
+    address public creator;
+    uint256 public feeRate;
 
-    /*
+    // @inheritdoc: INextV1Pool
+    mapping(address currency => int256 reserve) public override reservesOf;
+    // @inheritdoc: INextV1Pool
+    mapping (address currency => int256 liquidity) public override liquidityOf;
 
-        First of all we must have an function to contribute  
-    
-    */
-    
-    function contribute() payable public {
-
-    }
-
-    function withdraw() public {
-
-    }
+    constructor() {}
 }

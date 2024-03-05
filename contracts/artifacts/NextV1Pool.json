@@ -50,6 +50,8 @@
 		"gasEstimates": null,
 		"methodIdentifiers": {
 			"createLiquidityTokens(address,uint256,uint256)": "98527d87",
+			"creator()": "02d05d3f",
+			"feeRate()": "978bbdb9",
 			"liquidityOf(address)": "3c4750df",
 			"provide(address,address,address)": "f8cc1564",
 			"providerPayment((address,int256))": "39d0823e",
@@ -193,6 +195,32 @@
 			"type": "function"
 		},
 		{
+			"inputs": [],
+			"name": "creator",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "feeRate",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
 			"inputs": [
 				{
 					"internalType": "address",
@@ -204,7 +232,7 @@
 			"outputs": [
 				{
 					"internalType": "int256",
-					"name": "",
+					"name": "liquidity",
 					"type": "int256"
 				}
 			],
@@ -277,7 +305,7 @@
 			"outputs": [
 				{
 					"internalType": "int256",
-					"name": "",
+					"name": "reserve",
 					"type": "int256"
 				}
 			],

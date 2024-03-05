@@ -20,20 +20,25 @@ interface INextV1Pool {
 
     // @notice: Emitted for swaps between currency0 and currency1
     event Swap(
-        bytes32 indexed id,
         address indexed sender,
         int128 amount0,
         int128 amount1,
         uint24 fee
     );
 
-    struct swapParams {
-        bool zeroForOne; // The direction of the swap;
-        int256 amoutSpecified; // The amout being Bought or Sold;
-    }
+    // event LiquidityChanged(
+
+    // );
+
+    event feeRateChanged(
+        uint256 feeRate
+    );
 
     // @notice: return the reserves of that currency in the pool
     function reservesOf(address currency) external view returns (int256);
+
+    // @notice: return the liquidity of that currency in the pool
+    function liquidityOf(address currency) external view returns (int256);
 
     // @notice: provide to the reserve of the liquidity pool
     function provide(address currency0, address currency1, address provider) external payable;
@@ -42,20 +47,15 @@ interface INextV1Pool {
     function withdraw(address currency) external;
 
     // @notice: swapping one token to another in the pool
-    function take(Currency memory currency, address to, uint256 amount) external;
+    function swap(address currency0, address currency1, uint256 amount0, uint256 amount1) external;
 
     // @notice: creating liquidity tokens
-    function mint(address to, uint256 id, uint256 amount) external;
-
-    // @notice: burning tokens or permanently removing from circulation
-    function burn(address from, uint256 id, uint256 amount) external;
+    function createLiquidityTokens(address to, uint256 id, uint256 amount) external;
 
     // @notice: called by the user to pay what is owed
-    function settle(Currency memory token) external payable returns (uint256 paid);
+    function providerPayment(Currency memory token) external payable returns (uint256 paid);
 
-    // @notice: swap against the given pool
-    function swap(bytes32 poolId, swapParams memory params) external;
-
-
+    // @notice
+    // function feeRateChange(int256 feeRate) external;
 
 }
