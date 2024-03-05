@@ -4,15 +4,25 @@ pragma solidity 0.8.24;
 import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
 import {Currency} from "contracts/types/Currency.sol";
 
-abstract contract NextV1Pool is INextV1Pool {
+ abstract contract NextV1Pool is INextV1Pool {
 
-    address public creator;
-    uint256 public feeRate;
+    address immutable public token0;
+    address immutable public token1;
+    uint256 immutable public feeRate;
 
     // @inheritdoc: INextV1Pool
-    mapping(address currency => int256 reserve) public override reservesOf;
+    mapping(address currency => int256 reserve) public reservesOf;
     // @inheritdoc: INextV1Pool
-    mapping (address currency => int256 liquidity) public override liquidityOf;
+    mapping (address currency => int256 liquidity) public liquidityOf;
 
-    constructor() {}
+    constructor(
+        address _token0,
+        address _token1,
+        uint256 _feeRate
+    ) {
+        token0 = _token0;
+        token1 = _token1;
+        feeRate = _feeRate;
+    }
+
 }
