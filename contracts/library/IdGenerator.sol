@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Pool} from "contracts/types/Pool.sol";
+import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
-// @notice library to compute id for the pools
+// @notice: library to compute id for the pools
 library IdGenerator {
-    function toId(Pool memory pool) internal pure returns (bytes32) {
+
+    // @notice: compute id for the LiquidityProvider
+    function providerId(LiquidityProvider memory _provider) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(
-            pool.creator,
-            pool.currency0.currency,
-            pool.currency1.currency,
-            pool.fee
+            _provider.amountProvided,
+            _provider.providerAddress
         ));
     }
 }

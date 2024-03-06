@@ -49,15 +49,19 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"createLiquidityTokens(address,uint256,uint256)": "98527d87",
-			"creator()": "02d05d3f",
+			"burnTokens(address,address,uint256)": "423c3a48",
 			"feeRate()": "978bbdb9",
+			"feeRateChange(uint256)": "74e8ff72",
 			"liquidityOf(address)": "3c4750df",
-			"provide(address,address,address)": "f8cc1564",
-			"providerPayment((address,int256))": "39d0823e",
+			"mintTokens(address,address,uint256)": "6fc98ee1",
+			"provide(address,address,uint256)": "f9ac0217",
+			"provider(uint256)": "52cc70c6",
+			"providerPayment(address)": "762dc17a",
 			"reservesOf(address)": "93c85a21",
 			"swap(address,address,uint256,uint256)": "fe029156",
-			"withdraw(address)": "51cff8d9"
+			"token0()": "0dfe1681",
+			"token1()": "d21220a7",
+			"withdraw(uint256)": "2e1a7d4d"
 		}
 	},
 	"abi": [
@@ -70,9 +74,40 @@
 			"anonymous": false,
 			"inputs": [
 				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currency",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "liquidity",
+					"type": "uint256"
+				}
+			],
+			"name": "LiquidityChanged",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
 					"indexed": true,
 					"internalType": "address",
 					"name": "sender",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currency0",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currency1",
 					"type": "address"
 				},
 				{
@@ -115,57 +150,21 @@
 			"inputs": [
 				{
 					"indexed": true,
-					"internalType": "bytes32",
-					"name": "id",
-					"type": "bytes32"
-				},
-				{
-					"components": [
-						{
-							"internalType": "address",
-							"name": "currency",
-							"type": "address"
-						},
-						{
-							"internalType": "int256",
-							"name": "reserve",
-							"type": "int256"
-						}
-					],
-					"indexed": true,
-					"internalType": "struct Currency",
-					"name": "currency0",
-					"type": "tuple"
-				},
-				{
-					"components": [
-						{
-							"internalType": "address",
-							"name": "currency",
-							"type": "address"
-						},
-						{
-							"internalType": "int256",
-							"name": "reserve",
-							"type": "int256"
-						}
-					],
-					"indexed": true,
-					"internalType": "struct Currency",
-					"name": "currency1",
-					"type": "tuple"
-				},
-				{
-					"indexed": false,
 					"internalType": "address",
-					"name": "creator",
+					"name": "currency0",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "currency1",
 					"type": "address"
 				},
 				{
 					"indexed": false,
-					"internalType": "int24",
+					"internalType": "uint256",
 					"name": "fee",
-					"type": "int24"
+					"type": "uint256"
 				}
 			],
 			"name": "initialize",
@@ -175,36 +174,23 @@
 			"inputs": [
 				{
 					"internalType": "address",
-					"name": "to",
+					"name": "_to",
 					"type": "address"
 				},
-				{
-					"internalType": "uint256",
-					"name": "id",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "amount",
-					"type": "uint256"
-				}
-			],
-			"name": "createLiquidityTokens",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "creator",
-			"outputs": [
 				{
 					"internalType": "address",
-					"name": "",
+					"name": "_currency",
 					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
 				}
 			],
-			"stateMutability": "view",
+			"name": "burnTokens",
+			"outputs": [],
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
@@ -223,6 +209,19 @@
 		{
 			"inputs": [
 				{
+					"internalType": "uint256",
+					"name": "_feeRate",
+					"type": "uint256"
+				}
+			],
+			"name": "feeRateChange",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
 					"internalType": "address",
 					"name": "currency",
 					"type": "address"
@@ -231,9 +230,9 @@
 			"name": "liquidityOf",
 			"outputs": [
 				{
-					"internalType": "int256",
+					"internalType": "uint256",
 					"name": "liquidity",
-					"type": "int256"
+					"type": "uint256"
 				}
 			],
 			"stateMutability": "view",
@@ -243,43 +242,83 @@
 			"inputs": [
 				{
 					"internalType": "address",
-					"name": "currency0",
+					"name": "_to",
 					"type": "address"
 				},
 				{
 					"internalType": "address",
-					"name": "currency1",
+					"name": "_currency",
 					"type": "address"
 				},
 				{
-					"internalType": "address",
-					"name": "provider",
-					"type": "address"
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
 				}
 			],
-			"name": "provide",
+			"name": "mintTokens",
 			"outputs": [],
-			"stateMutability": "payable",
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
 			"inputs": [
 				{
-					"components": [
-						{
-							"internalType": "address",
-							"name": "currency",
-							"type": "address"
-						},
-						{
-							"internalType": "int256",
-							"name": "reserve",
-							"type": "int256"
-						}
-					],
-					"internalType": "struct Currency",
-					"name": "token",
-					"type": "tuple"
+					"internalType": "address",
+					"name": "_currency0",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_currency1",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
+				}
+			],
+			"name": "provide",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "provider",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "id",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "providerAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amountProvided",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_token",
+					"type": "address"
 				}
 			],
 			"name": "providerPayment",
@@ -290,7 +329,7 @@
 					"type": "uint256"
 				}
 			],
-			"stateMutability": "payable",
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
@@ -304,9 +343,9 @@
 			"name": "reservesOf",
 			"outputs": [
 				{
-					"internalType": "int256",
+					"internalType": "uint256",
 					"name": "reserve",
-					"type": "int256"
+					"type": "uint256"
 				}
 			],
 			"stateMutability": "view",
@@ -316,22 +355,22 @@
 			"inputs": [
 				{
 					"internalType": "address",
-					"name": "currency0",
+					"name": "_currency0",
 					"type": "address"
 				},
 				{
 					"internalType": "address",
-					"name": "currency1",
+					"name": "_currency1",
 					"type": "address"
 				},
 				{
 					"internalType": "uint256",
-					"name": "amount0",
+					"name": "_amount0",
 					"type": "uint256"
 				},
 				{
 					"internalType": "uint256",
-					"name": "amount1",
+					"name": "_amount1",
 					"type": "uint256"
 				}
 			],
@@ -341,11 +380,37 @@
 			"type": "function"
 		},
 		{
-			"inputs": [
+			"inputs": [],
+			"name": "token0",
+			"outputs": [
 				{
 					"internalType": "address",
-					"name": "currency",
+					"name": "",
 					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "token1",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
 				}
 			],
 			"name": "withdraw",
