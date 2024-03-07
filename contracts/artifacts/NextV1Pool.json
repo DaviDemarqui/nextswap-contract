@@ -55,13 +55,13 @@
 			"liquidityOf(address)": "3c4750df",
 			"mintTokens(address,address,uint256)": "6fc98ee1",
 			"provide(address,address,uint256)": "f9ac0217",
-			"provider(uint256)": "52cc70c6",
+			"provider(address)": "fbaf094a",
 			"providerPayment(address)": "762dc17a",
 			"reservesOf(address)": "93c85a21",
 			"swap(address,address,uint256,uint256)": "fe029156",
 			"token0()": "0dfe1681",
 			"token1()": "d21220a7",
-			"withdraw(uint256)": "2e1a7d4d"
+			"withdraw(address,address,uint256)": "d9caed12"
 		}
 	},
 	"abi": [
@@ -76,13 +76,25 @@
 				{
 					"indexed": false,
 					"internalType": "address",
-					"name": "currency",
+					"name": "currency0",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currency1",
 					"type": "address"
 				},
 				{
 					"indexed": false,
 					"internalType": "uint256",
-					"name": "liquidity",
+					"name": "liquidity0",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "liquidity1",
 					"type": "uint256"
 				}
 			],
@@ -287,9 +299,9 @@
 		{
 			"inputs": [
 				{
-					"internalType": "uint256",
+					"internalType": "address",
 					"name": "",
-					"type": "uint256"
+					"type": "address"
 				}
 			],
 			"name": "provider",
@@ -407,6 +419,16 @@
 		},
 		{
 			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_currency0",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_currency1",
+					"type": "address"
+				},
 				{
 					"internalType": "uint256",
 					"name": "_amount",

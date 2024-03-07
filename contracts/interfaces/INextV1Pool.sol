@@ -23,8 +23,10 @@ interface INextV1Pool {
 
     // @notice: Emitted when some change is made in the liquidity of the pool
     event LiquidityChanged(
-        address currency,
-        uint256 liquidity
+        address currency0,
+        address currency1,
+        uint256 liquidity0,
+        uint256 liquidity1
     );
 
     // @notice: Emitted when some change is made in the feeRate of the pool
@@ -42,7 +44,7 @@ interface INextV1Pool {
     function provide(address _currency0, address _currency1, uint256 _amount) external;
 
     // @notice: withdraw of the reserve of the liquidity pool
-    function withdraw(uint256 _amount) external;
+    function withdraw(address _currency0, address _currency1, uint256 _amount) external;
 
     // @notice: swapping one token to another in the pool
     function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external;

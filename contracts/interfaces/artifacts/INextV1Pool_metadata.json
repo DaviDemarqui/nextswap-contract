@@ -16,13 +16,25 @@
 					{
 						"indexed": false,
 						"internalType": "address",
-						"name": "currency",
+						"name": "currency0",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "currency1",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "liquidity",
+						"name": "liquidity0",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "liquidity1",
 						"type": "uint256"
 					}
 				],
@@ -227,7 +239,7 @@
 						"type": "uint256"
 					}
 				],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -280,6 +292,16 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "_currency0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_currency1",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
 						"name": "_amount",
 						"type": "uint256"
@@ -319,11 +341,11 @@
 	},
 	"sources": {
 		"contracts/interfaces/INextV1Pool.sol": {
-			"keccak256": "0xb397e227c98a39a0fc6faf39b1d935eb502e80efb6e71b1ee9008345b032f120",
+			"keccak256": "0x970cd317a36f0363f73999fccba37b75f5f4e76d39660df6a7ce0da75e308579",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://231a7b00cbb20a89fa4f4f0d441e452d84d6f428600cb802875e66eacbf5ba55",
-				"dweb:/ipfs/QmfUV1bBAWsJ1decW13sb8x9Bm3wm5W8cMkueruh713xsk"
+				"bzz-raw://6cbb677259ced71ed1033efc8884b93be59d07d5021b1b8465a30901b10e8ca5",
+				"dweb:/ipfs/QmSWy8kkuhLzF9g8K82z4WsycSyxa7SwjKcNhbuXJynzYU"
 			]
 		}
 	},

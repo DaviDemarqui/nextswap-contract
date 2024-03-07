@@ -7,12 +7,13 @@ import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
+// @author: 
 abstract contract NextV1Pool is INextV1Pool {
 
     address immutable public token0;
     address immutable public token1;
     uint256 immutable public feeRate;
-    LiquidityProvider[] public provider;
+    mapping(address => LiquidityProvider) public provider;
 
     // @inheritdoc: INextV1Pool
     mapping(address currency => uint256 reserve) public override reservesOf;
@@ -38,22 +39,39 @@ abstract contract NextV1Pool is INextV1Pool {
 
     // @inheritdoc: INextV1Pool
     function provide(address _currency0, address _currency1, uint256 _amount) external override  {
+
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
         require(IERC20(_currency0).transferFrom(msg.sender, address(this), _amount), "Transfer Failed");
 
         reservesOf[_currency0] += uint256(_amount);
         liquidityOf[_currency0] += uint256(_amount);
+        reservesOf[_currency1] += uint256(_amount);
+        liquidityOf[_currency1] += uint256(_amount);
 
         LiquidityProvider memory newestProvider;
         newestProvider.providerAddress = msg.sender;
         newestProvider.amountProvided = _amount;
         newestProvider.id = IdGenerator.providerId(newestProvider);
-        provider.push(newestProvider);
+        provider[msg.sender] = newestProvider;
+
+        // @inheritdoc: INextV1Pool
+        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
     // @inheritdoc: INextV1Pool
-    function withdraw(uint256 _amount) external override {
+    function withdraw(address _currency0, address _currency1, uint256 _amount) external override {
 
+        require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
+        require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
+        delete provider[msg.sender];
+        
+        reservesOf[_currency0] -= uint256(_amount);
+        liquidityOf[_currency0] -= uint256(_amount);
+        reservesOf[_currency1] -= uint256(_amount);
+        liquidityOf[_currency1] -= uint256(_amount);
+
+        // @inheritdoc: INextV1Pool
+        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
     // @inheritdoc: INextV1Pool

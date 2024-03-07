@@ -57,7 +57,7 @@
 			"providerPayment(address)": "762dc17a",
 			"reservesOf(address)": "93c85a21",
 			"swap(address,address,uint256,uint256)": "fe029156",
-			"withdraw(uint256)": "2e1a7d4d"
+			"withdraw(address,address,uint256)": "d9caed12"
 		}
 	},
 	"abi": [
@@ -72,13 +72,25 @@
 				{
 					"indexed": false,
 					"internalType": "address",
-					"name": "currency",
+					"name": "currency0",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currency1",
 					"type": "address"
 				},
 				{
 					"indexed": false,
 					"internalType": "uint256",
-					"name": "liquidity",
+					"name": "liquidity0",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "liquidity1",
 					"type": "uint256"
 				}
 			],
@@ -283,7 +295,7 @@
 					"type": "uint256"
 				}
 			],
-			"stateMutability": "payable",
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
@@ -335,6 +347,16 @@
 		},
 		{
 			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_currency0",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_currency1",
+					"type": "address"
+				},
 				{
 					"internalType": "uint256",
 					"name": "_amount",

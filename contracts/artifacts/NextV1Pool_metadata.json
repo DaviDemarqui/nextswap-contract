@@ -16,13 +16,25 @@
 					{
 						"indexed": false,
 						"internalType": "address",
-						"name": "currency",
+						"name": "currency0",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "currency1",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "liquidity",
+						"name": "liquidity0",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "liquidity1",
 						"type": "uint256"
 					}
 				],
@@ -227,9 +239,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "address",
 						"name": "",
-						"type": "uint256"
+						"type": "address"
 					}
 				],
 				"name": "provider",
@@ -348,6 +360,16 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "_currency0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_currency1",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
 						"name": "_amount",
 						"type": "uint256"
@@ -395,19 +417,19 @@
 			]
 		},
 		"contracts/NextV1Pool.sol": {
-			"keccak256": "0x73d32875d2e57a0ec5e62bf3e62d4ccafa3576226a8f693ace4693bd1c8275c3",
+			"keccak256": "0xeb992ecbf185713ee4702226cdc92d995a473ca322874d813e3d5ff4af66ea78",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://dbfaf33a28f2ba4842cbc32c23de9f9474d9c996aa260e3018d8caa7a60f56c6",
-				"dweb:/ipfs/QmSdE3gaiPNGENouoc6nTsBvJFoMQp7RNLcvKvPhJwQcyb"
+				"bzz-raw://098d3356f56f92f30cd5987fccab5930725f86d6d4f6762834112b27e6001930",
+				"dweb:/ipfs/QmPF1FbT8hK31AiyH2v8sJ9yc2PjYJRDiwpkaYaTQZuBT2"
 			]
 		},
 		"contracts/interfaces/INextV1Pool.sol": {
-			"keccak256": "0xefe9f73aaae665bf323a842c298836770ba8b2f1ddd748f69c200669c7f75b4a",
+			"keccak256": "0x970cd317a36f0363f73999fccba37b75f5f4e76d39660df6a7ce0da75e308579",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6ed60c38d452bdf5d68b95705f28f73e9eeba5c035f32453d09f1172bd447b6c",
-				"dweb:/ipfs/QmPZh869XsDPWjEpSNmR1ArMwi3qbb17NWqqJUgFerypLk"
+				"bzz-raw://6cbb677259ced71ed1033efc8884b93be59d07d5021b1b8465a30901b10e8ca5",
+				"dweb:/ipfs/QmSWy8kkuhLzF9g8K82z4WsycSyxa7SwjKcNhbuXJynzYU"
 			]
 		},
 		"contracts/library/IdGenerator.sol": {
