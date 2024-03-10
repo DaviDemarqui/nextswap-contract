@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
@@ -41,7 +41,7 @@ abstract contract NextV1Pool is INextV1Pool {
     function provide(address _currency0, address _currency1, uint256 _amount) external override  {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
-        require(IERC20(_currency0).transferFrom(msg.sender, address(this), _amount), "Transfer Failed");
+        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount), "Transfer Failed");
 
         reservesOf[_currency0] += uint256(_amount);
         liquidityOf[_currency0] += uint256(_amount);
