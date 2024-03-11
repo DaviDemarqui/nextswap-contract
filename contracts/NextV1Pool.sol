@@ -75,7 +75,18 @@ abstract contract NextV1Pool is INextV1Pool {
     }
 
     // @inheritdoc: INextV1Pool
-    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external override {
+    // @param _direction: when true the swap will be made form token0 to token1 otherwise the reverse operation will be made
+    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external override {
+        
+        require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
+        require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
+        require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
+
+        if(_direction) {
+
+        } else {
+
+        }
 
     }
 

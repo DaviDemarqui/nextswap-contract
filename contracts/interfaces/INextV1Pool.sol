@@ -47,7 +47,7 @@ interface INextV1Pool {
     function withdraw(address _currency0, address _currency1, uint256 _amount) external;
 
     // @notice: swapping one token to another in the pool
-    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external;
+    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external;
 
     // @notice: create or mint liquidity tokens
     function mintTokens(address _to, address _currency, uint256 _amount) external;
