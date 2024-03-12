@@ -8,7 +8,7 @@ import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
 // @author: 
-abstract contract NextV1Pool is INextV1Pool {
+contract NextV1Pool is INextV1Pool {
 
     address immutable public token0;
     address immutable public token1;
@@ -38,19 +38,20 @@ abstract contract NextV1Pool is INextV1Pool {
     }
 
     // @inheritdoc: INextV1Pool
-    function provide(address _currency0, address _currency1, uint256 _amount) external override  {
+    function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external override  {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
-        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount), "Transfer Failed");
+        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0), "Transfer Failed");
 
-        reservesOf[_currency0] += uint256(_amount);
-        liquidityOf[_currency0] += uint256(_amount);
-        reservesOf[_currency1] += uint256(_amount);
-        liquidityOf[_currency1] += uint256(_amount);
+        reservesOf[_currency0] += uint256(_amount0);
+        liquidityOf[_currency0] += uint256(_amount0);
+        reservesOf[_currency1] += uint256(_amount1);
+        liquidityOf[_currency1] += uint256(_amount1);
 
         LiquidityProvider memory newestProvider;
         newestProvider.providerAddress = msg.sender;
-        newestProvider.amountProvided = _amount;
+        newestProvider.amountProvided0 = _amount0;
+        newestProvider.amountProvided1 = _amount1;
         newestProvider.id = IdGenerator.providerId(newestProvider);
         provider[msg.sender] = newestProvider;
 
@@ -59,33 +60,47 @@ abstract contract NextV1Pool is INextV1Pool {
     }
 
     // @inheritdoc: INextV1Pool
-    function withdraw(address _currency0, address _currency1, uint256 _amount) external override {
+    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external override {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
         require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
-        delete provider[msg.sender];
+        require(_amount0 <= provider[msg.sender].amountProvided0 && _amount1 <= provider[msg.sender].amountProvided1, "Can't withdraw more than provided");
+        require(_amount0 > 0 && _amount1 > 0);
+
+        if(provider[msg.sender].amountProvided0 == _amount0 && provider[msg.sender].amountProvided1 == _amount1) {
+            delete provider[msg.sender];            
+        }        
         
-        reservesOf[_currency0] -= uint256(_amount);
-        liquidityOf[_currency0] -= uint256(_amount);
-        reservesOf[_currency1] -= uint256(_amount);
-        liquidityOf[_currency1] -= uint256(_amount);
+        reservesOf[_currency0] -= uint256(_amount0);
+        liquidityOf[_currency0] -= uint256(_amount0);
+        reservesOf[_currency1] -= uint256(_amount1);
+        liquidityOf[_currency1] -= uint256(_amount1);
 
         // @inheritdoc: INextV1Pool
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
     // @inheritdoc: INextV1Pool
-    // @param _direction: when true the swap will be made form token0 to token1 otherwise the reverse operation will be made
     function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external override {
         
         require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
         require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
+        
+        if(_direction) { // Swap 0 to 1
+        
+            ERC20(token0).transferFrom(msg.sender, address(this), _amount0);
+            ERC20(token1).transfer(msg.sender, _amount0);
+            
+            reservesOf[_currency0] += uint256(_amount0);
+            reservesOf[_currency1] -= uint256(_amount0);
+        } else { // Swap 1 to 0
 
-        if(_direction) {
+            ERC20(token1).transferFrom(msg.sender, address(this), _amount1);
+            ERC20(token0).transfer(msg.sender, _amount1);
 
-        } else {
-
+            reservesOf[_currency1] += uint256(_amount1);
+            reservesOf[_currency0] -= uint256(_amount1);
         }
 
     }

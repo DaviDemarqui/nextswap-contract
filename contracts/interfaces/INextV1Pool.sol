@@ -41,10 +41,10 @@ interface INextV1Pool {
     function liquidityOf(address _currency) external view returns (uint256);
 
     // @notice: provide to the reserve of the liquidity pool
-    function provide(address _currency0, address _currency1, uint256 _amount) external;
+    function provide(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external;
 
     // @notice: withdraw of the reserve of the liquidity pool
-    function withdraw(address _currency0, address _currency1, uint256 _amount) external;
+    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external;
 
     // @notice: swapping one token to another in the pool
     function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external;

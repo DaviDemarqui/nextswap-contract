@@ -4,5 +4,6 @@ pragma solidity ^0.8.24;
 struct LiquidityProvider {
     bytes32 id;
     address providerAddress;
-    uint256 amountProvided;
+    uint256 amountProvided0;
+    uint256 amountProvided1;
 }
