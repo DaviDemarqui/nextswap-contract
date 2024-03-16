@@ -68,6 +68,7 @@ contract NextV1Pool is INextV1Pool {
         require(_amount0 <= provider[msg.sender].amountProvided0 && _amount1 <= provider[msg.sender].amountProvided1, "Can't withdraw more than provided");
         require(_amount0 > 0 && _amount1 > 0);
 
+        // In case the provider make a complete withdraw he will be removed as provider
         if(provider[msg.sender].amountProvided0 == _amount0 && provider[msg.sender].amountProvided1 == _amount1) {
             delete provider[msg.sender];            
         }        
@@ -79,6 +80,8 @@ contract NextV1Pool is INextV1Pool {
 
         // @inheritdoc: INextV1Pool
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
+
+        require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1));
     }
 
     // @inheritdoc: INextV1Pool
