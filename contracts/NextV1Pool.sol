@@ -41,7 +41,6 @@ contract NextV1Pool is INextV1Pool {
     function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external override  {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
-        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0), "Transfer Failed");
 
         reservesOf[_currency0] += uint256(_amount0);
         liquidityOf[_currency0] += uint256(_amount0);
@@ -57,6 +56,8 @@ contract NextV1Pool is INextV1Pool {
 
         // @inheritdoc: INextV1Pool
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
+
+        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0), "Transfer Failed");
     }
 
     // @inheritdoc: INextV1Pool
@@ -88,19 +89,18 @@ contract NextV1Pool is INextV1Pool {
         require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
         
         if(_direction) { // Swap 0 to 1
-        
+            reservesOf[_currency0] += uint256(_amount0);
+            reservesOf[_currency1] -= uint256(_amount0);
+
             ERC20(token0).transferFrom(msg.sender, address(this), _amount0);
             ERC20(token1).transfer(msg.sender, _amount0);
             
-            reservesOf[_currency0] += uint256(_amount0);
-            reservesOf[_currency1] -= uint256(_amount0);
         } else { // Swap 1 to 0
+            reservesOf[_currency1] += uint256(_amount1);
+            reservesOf[_currency0] -= uint256(_amount1);
 
             ERC20(token1).transferFrom(msg.sender, address(this), _amount1);
             ERC20(token0).transfer(msg.sender, _amount1);
-
-            reservesOf[_currency1] += uint256(_amount1);
-            reservesOf[_currency0] -= uint256(_amount1);
         }
 
     }
