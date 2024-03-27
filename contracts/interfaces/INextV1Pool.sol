@@ -3,7 +3,10 @@ pragma solidity ^0.8.24;
 
 interface INextV1Pool {
 
+    error InvalidProviderAddress();
     error PoolNotInitialized();
+    error InvalidCurrency();
+    error InvalidWithdraw();
 
     // @notice: Emitted when a new pool is initialized
     event initialize(

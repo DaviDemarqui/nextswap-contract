@@ -7,7 +7,7 @@ import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
-// @author: 
+
 contract NextV1Pool is INextV1Pool {
 
     address immutable public token0;
@@ -63,10 +63,14 @@ contract NextV1Pool is INextV1Pool {
     // @inheritdoc: INextV1Pool
     function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external override {
 
-        require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
-        require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
-        require(_amount0 <= provider[msg.sender].amountProvided0 && _amount1 <= provider[msg.sender].amountProvided1, "Can't withdraw more than provided");
         require(_amount0 > 0 && _amount1 > 0);
+
+        if (_currency0 != token0 || _currency1 != token1) {
+            revert InvalidCurrency();
+        }
+        if(provider[msg.sender].providerAddress == address(0)) {
+            revert InvalidProviderAddress(); 
+        }
 
         // In case the provider make a complete withdraw he will be removed as provider
         if(provider[msg.sender].amountProvided0 == _amount0 && provider[msg.sender].amountProvided1 == _amount1) {
@@ -78,18 +82,23 @@ contract NextV1Pool is INextV1Pool {
         reservesOf[_currency1] -= uint256(_amount1);
         liquidityOf[_currency1] -= uint256(_amount1);
 
+        require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1));
+
         // @inheritdoc: INextV1Pool
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
-
-        require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1));
     }
 
     // @inheritdoc: INextV1Pool
     function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external override {
         
-        require(msg.sender == provider[msg.sender].providerAddress, "This addres isn't from any provider");
-        require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
         require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
+
+        if (_currency0 != token0 || _currency1 != token1) {
+            revert InvalidCurrency();
+        }
+        if(provider[msg.sender].providerAddress == address(0)) {
+            revert InvalidProviderAddress(); 
+        }
         
         if(_direction) { // Swap 0 to 1
             reservesOf[_currency0] += uint256(_amount0);
@@ -106,6 +115,7 @@ contract NextV1Pool is INextV1Pool {
             ERC20(token0).transfer(msg.sender, _amount1);
         }
 
+        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
     // @inheritdoc: INextV1Pool
