@@ -6,7 +6,7 @@ import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
 
-contract NextV1Pool {
+contract NextPool {
 
     // @notice: Emitted when a new pool is initialized
     event initialize(
