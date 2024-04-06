@@ -2,43 +2,70 @@
 pragma solidity 0.8.24;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-import {INextV1Pool} from "contracts/interfaces/INextV1Pool.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
 
-contract NextV1Pool is INextV1Pool {
+contract NextV1Pool {
+
+    // @notice: Emitted when a new pool is initialized
+    event initialize(
+        address indexed currency0,
+        address indexed currency1,
+        uint256 fee
+    );
+
+    event Swap(
+        address indexed sender,
+        address currency0,
+        address currency1,
+        int128 amount0,
+        int128 amount1,
+        uint24 fee
+    );
+
+    event LiquidityChanged(
+        address indexed currency0,
+        address indexed currency1,
+        uint256 liquidity0,
+        uint256 liquidity1
+    );
+
+    event feeRateChanged(
+        uint256 feeRate
+    );
+
+    error InvalidProviderAddress();
+    error PoolNotInitialized();
+    error InvalidCurrency();
+    error InvalidWithdraw();
 
     address immutable public token0;
     address immutable public token1;
     uint256 immutable public feeRate;
+
     mapping(address => LiquidityProvider) public provider;
+    mapping(address currency => uint256 reserve) public reservesOf;
+    mapping(address currency => uint256 liquidity) public liquidityOf;
 
-    // @inheritdoc: INextV1Pool
-    mapping(address currency => uint256 reserve) public override reservesOf;
-    // @inheritdoc: INextV1Pool
-    mapping(address currency => uint256 liquidity) public override liquidityOf;
+    // todo - See how to do in a upgradable contract
+    // constructor(
+    //     address _token0,
+    //     address _token1,
+    //     uint256 _feeRate
+    // ) {
+    //     token0 = _token0;
+    //     token1 = _token1;
+    //     feeRate = _feeRate;
 
-    constructor(
-        address _token0,
-        address _token1,
-        uint256 _feeRate
-    ) {
-        token0 = _token0;
-        token1 = _token1;
-        feeRate = _feeRate;
+    //     emit initialize(
+    //         token0,
+    //         token1,
+    //         feeRate
+    //     );
+    // }
 
-        // @inheritdoc: INextV1Pool
-        emit initialize(
-            token0,
-            token1,
-            feeRate
-        );
-    }
-
-    // @inheritdoc: INextV1Pool
-    function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external override  {
+    function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external  {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
 
@@ -54,14 +81,11 @@ contract NextV1Pool is INextV1Pool {
         newestProvider.id = IdGenerator.providerId(newestProvider);
         provider[msg.sender] = newestProvider;
 
-        // @inheritdoc: INextV1Pool
-        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
-
         require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0), "Transfer Failed");
+        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
-    // @inheritdoc: INextV1Pool
-    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external override {
+    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external {
 
         require(_amount0 > 0 && _amount1 > 0);
 
@@ -83,13 +107,11 @@ contract NextV1Pool is INextV1Pool {
         liquidityOf[_currency1] -= uint256(_amount1);
 
         require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1));
-
-        // @inheritdoc: INextV1Pool
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
-    // @inheritdoc: INextV1Pool
-    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external override {
+    //@param: _direction sort the direction of the swap using a boolean, true: 0 => 1, false: 1 => 0
+    function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external {
         
         require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
 
@@ -118,23 +140,19 @@ contract NextV1Pool is INextV1Pool {
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
-    // @inheritdoc: INextV1Pool
-    function mintTokens(address _to, address _currency, uint256 _amount) external override {
+    function mintTokens(address _to, address _currency, uint256 _amount) external {
 
     }
 
-    // @inheritdoc: INextV1Pool
-    function burnTokens(address _to, address _currency, uint256 _amount) external override {
+    function burnTokens(address _to, address _currency, uint256 _amount) external {
 
     }
 
-    // @inheritdoc: INextV1Pool
-    function providerPayment(address _token) external override returns (uint256 paid) {
+    function providerPayment(address _token) external returns (uint256 paid) {
 
     }
 
-    // @inheritdoc: INextV1Pool
-    function feeRateChange(uint256 _feeRate) external override {
+    function feeRateChange(uint256 _feeRate) external {
 
     }
 
