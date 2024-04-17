@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.20;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
+// author: @DaviDemarqui
+// @notice: This is the Pool contract of the NextSwap project
+// this is currently incomplete, so a lot of thing may change
+// in the future :)
 
 contract NextPool {
 
-    // @notice: Emitted when a new pool is initialized
     event initialize(
+        address creator,
         address indexed currency0,
         address indexed currency1,
         uint256 fee
@@ -31,10 +35,6 @@ contract NextPool {
         uint256 liquidity1
     );
 
-    event feeRateChanged(
-        uint256 feeRate
-    );
-
     error InvalidProviderAddress();
     error PoolNotInitialized();
     error InvalidCurrency();
@@ -48,22 +48,17 @@ contract NextPool {
     mapping(address currency => uint256 reserve) public reservesOf;
     mapping(address currency => uint256 liquidity) public liquidityOf;
 
-    // todo - See how to do in a upgradable contract
-    // constructor(
-    //     address _token0,
-    //     address _token1,
-    //     uint256 _feeRate
-    // ) {
-    //     token0 = _token0;
-    //     token1 = _token1;
-    //     feeRate = _feeRate;
+    constructor(
+        address _token0,
+        address _token1,
+        uint256 _feeRate
+    ) {
+        token0 = _token0;
+        token1 = _token1;
+        feeRate = _feeRate;
 
-    //     emit initialize(
-    //         token0,
-    //         token1,
-    //         feeRate
-    //     );
-    // }
+        emit initialize(msg.sender, token0, token1, feeRate);
+    }
 
     function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external  {
 
@@ -87,14 +82,10 @@ contract NextPool {
 
     function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external {
 
-        require(_amount0 > 0 && _amount1 > 0);
+        require(_amount0 > 0 && _amount1 > 0, "Invalid Ammount");
 
-        if (_currency0 != token0 || _currency1 != token1) {
-            revert InvalidCurrency();
-        }
-        if(provider[msg.sender].providerAddress == address(0)) {
-            revert InvalidProviderAddress(); 
-        }
+        if (_currency0 != token0 || _currency1 != token1) { revert InvalidCurrency(); }
+        else if(provider[msg.sender].providerAddress == address(0)) { revert InvalidProviderAddress(); }
 
         // In case the provider make a complete withdraw he will be removed as provider
         if(provider[msg.sender].amountProvided0 == _amount0 && provider[msg.sender].amountProvided1 == _amount1) {
@@ -112,15 +103,11 @@ contract NextPool {
 
     //@param: _direction sort the direction of the swap using a boolean, true: 0 => 1, false: 1 => 0
     function swap(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1, bool _direction) external {
-        
+
         require(_amount0 > 0 && _amount1 > 0, "The amount cannot be 0");
 
-        if (_currency0 != token0 || _currency1 != token1) {
-            revert InvalidCurrency();
-        }
-        if(provider[msg.sender].providerAddress == address(0)) {
-            revert InvalidProviderAddress(); 
-        }
+        if (_currency0 != token0 || _currency1 != token1) { revert InvalidCurrency(); }
+        else if(provider[msg.sender].providerAddress == address(0)) { revert InvalidProviderAddress(); }
         
         if(_direction) { // Swap 0 to 1
             reservesOf[_currency0] += uint256(_amount0);
@@ -128,7 +115,6 @@ contract NextPool {
 
             ERC20(token0).transferFrom(msg.sender, address(this), _amount0);
             ERC20(token1).transfer(msg.sender, _amount0);
-            
         } else { // Swap 1 to 0
             reservesOf[_currency1] += uint256(_amount1);
             reservesOf[_currency0] -= uint256(_amount1);
@@ -149,10 +135,6 @@ contract NextPool {
     }
 
     function providerPayment(address _token) external returns (uint256 paid) {
-
-    }
-
-    function feeRateChange(uint256 _feeRate) external {
 
     }
 
