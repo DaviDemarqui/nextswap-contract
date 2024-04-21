@@ -5,27 +5,30 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IdGenerator} from "contracts/library/IdGenerator.sol";
 import {LiquidityProvider} from "contracts/types/LiquidityProvider.sol";
 
-// author: @DaviDemarqui
+// @author: Dave
 // @notice: This is the Pool contract of the NextSwap project
 // this is currently incomplete, so a lot of thing may change
 // in the future :)
-
 contract NextPool {
 
-    event initialize(
+    // ========================  
+    // *   EVENTS & ERRORS    *  
+    // ========================
+
+    event initialized(
         address creator,
         address indexed currency0,
         address indexed currency1,
         uint256 fee
     );
 
-    event Swap(
+    event TokenSwap(
         address indexed sender,
         address currency0,
         address currency1,
-        int128 amount0,
-        int128 amount1,
-        uint24 fee
+        uint256 amount0,
+        uint256 amount1,
+        bool direction
     );
 
     event LiquidityChanged(
@@ -39,6 +42,10 @@ contract NextPool {
     error PoolNotInitialized();
     error InvalidCurrency();
     error InvalidWithdraw();
+
+    // ========================
+    // *       STORAGE        *  
+    // ========================
 
     address immutable public token0;
     address immutable public token1;
@@ -57,7 +64,7 @@ contract NextPool {
         token1 = _token1;
         feeRate = _feeRate;
 
-        emit initialize(msg.sender, token0, token1, feeRate);
+        emit initialized(msg.sender, token0, token1, feeRate);
     }
 
     function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external  {
@@ -123,19 +130,7 @@ contract NextPool {
             ERC20(token0).transfer(msg.sender, _amount1);
         }
 
-        emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
-    }
-
-    function mintTokens(address _to, address _currency, uint256 _amount) external {
-
-    }
-
-    function burnTokens(address _to, address _currency, uint256 _amount) external {
-
-    }
-
-    function providerPayment(address _token) external returns (uint256 paid) {
-
+        emit TokenSwap(msg.sender, _currency0, _currency1, _amount0, _amount1, _direction);
     }
 
 }
