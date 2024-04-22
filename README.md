@@ -1,12 +1,12 @@
 
-#Nextswap
+# Nextswap Contract
 Uninswap inspired project for learning purposes :D
 
-##Features
+## Features
 - Nextswap Pool Contract ( In Progress ⏳ )
 - Nextswap Token ( In Progress ⏳ )
 - Nextswap DAO ( To-Do )
 
-##Authors
+## Authors
 - [@DaviDemarqui](https://www.github.com/DaviDemarqui)
 
