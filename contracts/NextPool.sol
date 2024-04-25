@@ -15,10 +15,10 @@ contract NextPool {
     // *   EVENTS & ERRORS    *  
     // ========================
 
-    event initialized(
+    event PoolInitialized(
         address creator,
         address indexed currency0,
-        address indexed currency1,
+        address indexed currency1
     );
 
     event TokenSwap(
@@ -54,6 +54,10 @@ contract NextPool {
     mapping(address currency => uint256 reserve) public reservesOf;
     mapping(address currency => uint256 liquidity) public liquidityOf;
 
+    // =========================  
+    // * FUNCTIONS & MODIFIERS *  
+    // =========================
+
     constructor(
         address _token0,
         address _token1,
@@ -62,10 +66,22 @@ contract NextPool {
         token0 = _token0;
         token1 = _token1;
         creator = _creator;
-        emit initialized(msg.sender, token0, token1);
+
+        emit PoolInitialized(msg.sender, token0, token1);
     }
 
-    function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external  {
+    modifier validateOnlyTokens(address _currency0, address _currency1) {
+        require(_currency0 == token0 && _currency1 == token1, "Invalid Token");
+        _;
+    }
+
+    modifier validateTokensAndAmount(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) {
+        require(_currency0 == token0 && _currency1 == token1, "Invalid Token");
+        require(_amount0 > 0 && _amount1 > 0, "Invalid Amount");
+        _;
+    }
+
+    function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) validateTokensAndAmount(_currency0, _currency1, _amount0, _amount1) external  {
 
         require(_currency0 == token0 && _currency1 == token1, "Invalid Currency");
 
@@ -74,20 +90,22 @@ contract NextPool {
         reservesOf[_currency1] += uint256(_amount1);
         liquidityOf[_currency1] += uint256(_amount1);
 
-        LiquidityProvider memory newestProvider;
-        newestProvider.providerAddress = msg.sender;
-        newestProvider.amountProvided0 = _amount0;
-        newestProvider.amountProvided1 = _amount1;
-        newestProvider.id = IdGenerator.providerId(newestProvider);
-        provider[msg.sender] = newestProvider;
+        provider[msg.sender] = LiquidityProvider({
+            id: IdGenerator.providerId(msg.sender),
+            providerAddress: msg.sender,
+            amountProvided0: _amount0,
+            amountProvided1: _amount1
+        });
 
-        require(ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0), "Transfer Failed");
+        require( // Transfering tokens and emitting the completion event
+            ERC20(_currency0).transferFrom(msg.sender, address(this), _amount0) &&
+            ERC20(_currency1).transferFrom(msg.sender, address(this), _amount1), 
+            "Transfer Failed"
+        );
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
-    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) external {
-
-        require(_amount0 > 0 && _amount1 > 0, "Invalid Ammount");
+    function withdraw(address _currency0, address _currency1,  uint256 _amount0, uint256 _amount1) validateOnlyTokens(_currency0, _currency1) external {
 
         if (_currency0 != token0 || _currency1 != token1) { revert InvalidCurrency(); }
         else if(provider[msg.sender].providerAddress == address(0)) { revert InvalidProviderAddress(); }
@@ -102,7 +120,7 @@ contract NextPool {
         reservesOf[_currency1] -= uint256(_amount1);
         liquidityOf[_currency1] -= uint256(_amount1);
 
-        require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1));
+        require(ERC20(_currency0).transfer(msg.sender, _amount0) && ERC20(_currency1).transfer(msg.sender, _amount1), "Transfer Failed");
         emit LiquidityChanged(_currency0, _currency1, liquidityOf[_currency0], liquidityOf[_currency1]);
     }
 
