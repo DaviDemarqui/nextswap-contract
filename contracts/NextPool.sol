@@ -19,7 +19,6 @@ contract NextPool {
         address creator,
         address indexed currency0,
         address indexed currency1,
-        uint256 fee
     );
 
     event TokenSwap(
@@ -49,7 +48,7 @@ contract NextPool {
 
     address immutable public token0;
     address immutable public token1;
-    uint256 immutable public feeRate;
+    address immutable public creator;
 
     mapping(address => LiquidityProvider) public provider;
     mapping(address currency => uint256 reserve) public reservesOf;
@@ -58,13 +57,12 @@ contract NextPool {
     constructor(
         address _token0,
         address _token1,
-        uint256 _feeRate
+        address _creator
     ) {
         token0 = _token0;
         token1 = _token1;
-        feeRate = _feeRate;
-
-        emit initialized(msg.sender, token0, token1, feeRate);
+        creator = _creator;
+        emit initialized(msg.sender, token0, token1);
     }
 
     function provide(address _currency0, address _currency1, uint256 _amount0, uint256 _amount1) external  {
